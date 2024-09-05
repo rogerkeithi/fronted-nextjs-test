@@ -1,5 +1,6 @@
 'use client'
 
+import { registerUser } from '@/app/api/register/registerUser'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,25 +17,10 @@ export const RegisterForm = () => {
     e.preventDefault()
 
     try {
-      const registerResponse = await fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username,
-          nivel: 'USER',
-          password: password
-        })
-      })
-
-      if (registerResponse.ok) {
-        signIn(undefined, { callbackUrl: '/dashboard' })
-      } else {
-        setError((await registerResponse.json()).error)
-      }
+      await registerUser(username, password);
+      signIn(undefined, { callbackUrl: '/dashboard' });
     } catch (error: any) {
-      setError(error?.message)
+      setError(error?.message);
     }
   }
 

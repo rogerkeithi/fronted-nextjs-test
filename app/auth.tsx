@@ -17,7 +17,7 @@ export const LogoutButton = () => {
   return (
     <button
       onClick={() => signOut()}
-      className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition duration-300 ease-in-out"
+      className="bg-indigo-800 text-white font-semibold py-2 px-4 rounded hover:bg-indigo-600 transition duration-300 ease-in-out"
     >
       Sair
     </button>

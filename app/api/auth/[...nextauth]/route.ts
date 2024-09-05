@@ -5,7 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 interface DecodedToken {
   id: string;
   username: string;
-  nivel: NIVEL;
+  nivel: string;
 }
 
 interface LoginResponse {
@@ -35,12 +35,13 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.username || !credentials.password) {
           return null
         }
+        const token = Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64');
 
-        const loginResponse = await fetch('http://localhost:8080/api/auth/login', {
+        const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Basic ' + btoa(credentials.username + ':' + credentials.password)
+            'Authorization': `Basic ${token}`,
           },
           body: JSON.stringify({
             username: credentials.username,
@@ -63,7 +64,6 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     session: ({ session, token }) => {
-      console.log('Session Callback', { session, token })
       return {
         ...session,
         user: {
@@ -75,7 +75,6 @@ export const authOptions: NextAuthOptions = {
       }
     },
     jwt: ({ token, user }) => {
-      console.log('JWT Callback', { token, user })
       if (user) {
         const u = user as unknown as any
         return {
