@@ -8,7 +8,7 @@ import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 
 export const RegisterForm = () => {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -16,20 +16,22 @@ export const RegisterForm = () => {
     e.preventDefault()
 
     try {
-      const res = await fetch('/api/register', {
+      const registerResponse = await fetch('http://localhost:8080/api/users', {
         method: 'POST',
-        body: JSON.stringify({
-          email,
-          password
-        }),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          nivel: 'USER',
+          password: password
+        })
       })
-      if (res.ok) {
-        signIn()
+
+      if (registerResponse.ok) {
+        signIn(undefined, { callbackUrl: '/dashboard' })
       } else {
-        setError((await res.json()).error)
+        setError((await registerResponse.json()).error)
       }
     } catch (error: any) {
       setError(error?.message)
@@ -39,18 +41,18 @@ export const RegisterForm = () => {
   return (
     <form onSubmit={onSubmit} className="space-y-12 w-full sm:w-[400px]">
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="username">Username</Label>
         <Input
           className="w-full"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          id="email"
-          type="email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          id="username"
+          type="username"
         />
       </div>
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Senha</Label>
         <Input
           className="w-full"
           required
@@ -62,8 +64,8 @@ export const RegisterForm = () => {
       </div>
       {error && <Alert>{error}</Alert>}
       <div className="w-full">
-        <Button className="w-full" size="lg">
-          Register
+        <Button className="w-full bg-green-500 hover:bg-green-600 text-white" size="lg">
+          Criar usuário
         </Button>
       </div>
     </form>

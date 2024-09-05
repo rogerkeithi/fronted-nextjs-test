@@ -2,7 +2,6 @@ import { jwtDecode } from 'jwt-decode'
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-//Create interface file
 interface DecodedToken {
   id: string;
   username: string;
